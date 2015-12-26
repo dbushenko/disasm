@@ -1,5 +1,6 @@
 package com.sun.tools.javap;
 
+import com.google.gson.Gson;
 import com.sun.tools.classfile.ConstantPool;
 import com.sun.tools.classfile.ConstantPool.CONSTANT_Class_info;
 import com.sun.tools.classfile.ConstantPool.CONSTANT_Double_info;
@@ -30,17 +31,17 @@ public class ConstantPoolPrinter {
             System.out.print("{\"name\":");
             printConstant(constant_pool.get(info.name_index), constant_pool);
             
-            System.out.print(",\"type\":");
+            System.out.print(",\"constantType\":");
             printConstant(constant_pool.get(info.type_index), constant_pool);
             System.out.print("}");
             
         } else if (cpInfo instanceof CONSTANT_String_info) {
             CONSTANT_String_info info = (CONSTANT_String_info) cpInfo;
-            System.out.print("\"" + info.getString() + "\"");
+            System.out.print("{\"stringValue\":" + new Gson().toJson(info.getString()) + "}");
             
         } else if (cpInfo instanceof CONSTANT_Utf8_info) {
             CONSTANT_Utf8_info info = (CONSTANT_Utf8_info) cpInfo;
-            System.out.print("\"" + info.value + "\"");
+            System.out.print("{\"utf8Value\":\"" + info.value + "\"}");
             
         } else if (cpInfo instanceof CONSTANT_Methodref_info) {
             CONSTANT_Methodref_info info = (CONSTANT_Methodref_info) cpInfo;
@@ -76,9 +77,9 @@ public class ConstantPoolPrinter {
 
         } else if (cpInfo instanceof CONSTANT_InterfaceMethodref_info) {
             CONSTANT_InterfaceMethodref_info info = (CONSTANT_InterfaceMethodref_info) cpInfo;
-            System.out.print("{\"name\":");
+            System.out.print("{\"methodName\":");
             printConstant(constant_pool.get(info.name_and_type_index), constant_pool);
-            System.out.print(",\"class\":");
+            System.out.print(",\"className\":");
             printConstant(constant_pool.get(info.class_index), constant_pool);
             System.out.print("}");
             

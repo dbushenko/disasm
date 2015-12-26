@@ -447,9 +447,10 @@ public class ClassWriter extends BasicWriter {
             @Override
             public Void visitConstantPoolRefAndValue(Instruction instr, int index, int value, Integer p) {
                 try {
-                    System.out.print(new Gson().toJson(constant_pool.get(index)));
+                    //System.out.print(new Gson().toJson(constant_pool.get(index)));
+                    ConstantPoolPrinter.printConstant(constant_pool.get(index), constant_pool);
 
-                } catch (InvalidIndex e) {
+                } catch (ConstantPoolException e) {
                     throw new RuntimeException(e);
                 }
                 return null;
@@ -468,12 +469,12 @@ public class ClassWriter extends BasicWriter {
 
             @Override
             public Void visitLocalAndValue(Instruction instr, int index, int value, Integer p) {
-                //System.out.print("{}");
-                try {
-                    System.out.print(new Gson().toJson(constant_pool.get(index)));
-                } catch (InvalidIndex e) {
-                    throw new RuntimeException(e);
-                }
+                System.out.print("{}");
+//                try {
+//                    System.out.print(new Gson().toJson(constant_pool.get(index)));
+//                } catch (InvalidIndex e) {
+//                    throw new RuntimeException(e);
+//                }
                 return null;
             }
 
@@ -512,7 +513,7 @@ public class ClassWriter extends BasicWriter {
 
     protected void writeJsonMethod(Method m) {
         try {
-            System.out.println("{\"name\":\"" + m.getName(constant_pool) + ",\n\"descriptor\":");
+            System.out.println("{\"name\":\"" + m.getName(constant_pool) + "\",\n\"descriptor\":");
             ConstantPoolPrinter.printConstant(constant_pool.get(m.descriptor.index), constant_pool);
             System.out.print(",\n\"accessFlags\":");
             System.out.print(new Gson().toJson(m.access_flags.getMethodModifiers()));
