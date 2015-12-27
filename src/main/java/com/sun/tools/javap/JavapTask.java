@@ -70,6 +70,7 @@ import com.sun.tools.classfile.Attributes;
 import com.sun.tools.classfile.ClassFile;
 import com.sun.tools.classfile.ConstantPool;
 import com.sun.tools.classfile.ConstantPoolException;
+import com.sun.tools.classfile.Descriptor.InvalidDescriptor;
 import com.sun.tools.classfile.Field;
 import com.sun.tools.classfile.InnerClasses_attribute;
 import com.sun.tools.classfile.Method;
@@ -628,7 +629,7 @@ public class JavapTask implements DisassemblerTool.DisassemblerTask, Messages {
     }
 
     protected int writeClass(ClassWriter classWriter, String className)
-            throws IOException, ConstantPoolException {
+            throws IOException, ConstantPoolException, InvalidDescriptor {
         JavaFileObject fo = open(className);
         if (fo == null) {
             reportError("err.class.not.found", className);
@@ -674,7 +675,10 @@ public class JavapTask implements DisassemblerTool.DisassemblerTask, Messages {
         for (int i = 0; i < cf.fields.length; i++) {
             Field f = cf.fields[i];
             System.out.print("{\"name\":\"" + f.getName(cf.constant_pool) + "\",");
-            System.out.print("\"accessFlags\":" + gson.toJson( f.access_flags.getFieldModifiers() ));
+            System.out.print("\"fieldType\":");
+            System.out.print("\"" + f.descriptor.getFieldType(cf.constant_pool) + "\"");
+            
+            System.out.print(",\"accessFlags\":" + gson.toJson( f.access_flags.getFieldModifiers() ));
             
             System.out.print("}");
             if (i != cf.fields.length-1) System.out.print(",");

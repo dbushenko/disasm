@@ -18,6 +18,8 @@ import com.sun.tools.classfile.ConstantPool.CONSTANT_String_info;
 import com.sun.tools.classfile.ConstantPool.CONSTANT_Utf8_info;
 import com.sun.tools.classfile.ConstantPool.CPInfo;
 import com.sun.tools.classfile.ConstantPoolException;
+import com.sun.tools.classfile.Descriptor;
+import com.sun.tools.classfile.Descriptor.InvalidDescriptor;
 
 public class ConstantPoolPrinter {
 
@@ -99,5 +101,105 @@ public class ConstantPoolPrinter {
         
     }
     
+    public static String parseDescriptor(String desc) {
+        int p = 0;
+        StringBuilder sb = new StringBuilder();
+        int dims = 0;
+        int count = 0;
+        int end = desc.length();
+
+        while (p < end) {
+            String type;
+            char ch;
+            switch (ch = desc.charAt(p++)) {
+                case '(':
+                    sb.append('(');
+                    continue;
+
+                case ')':
+                    sb.append(')');
+                    continue;
+
+                case '[':
+                    dims++;
+                    continue;
+
+                case 'B':
+                    type = "byte";
+                    break;
+
+                case 'C':
+                    type = "char";
+                    break;
+
+                case 'D':
+                    type = "double";
+                    break;
+
+                case 'F':
+                    type = "float";
+                    break;
+
+                case 'I':
+                    type = "int";
+                    break;
+
+                case 'J':
+                    type = "long";
+                    break;
+
+                case 'L':
+                    int sep = desc.indexOf(';', p);
+                    if (sep == -1)
+                        throw new RuntimeException("Invalid descriptor");
+                    type = desc.substring(p, sep).replace('/', '.');
+                    p = sep + 1;
+                    break;
+
+                case 'S':
+                    type = "short";
+                    break;
+
+                case 'Z':
+                    type = "boolean";
+                    break;
+
+                case 'V':
+                    type = "void";
+                    break;
+
+                default:
+                    throw new RuntimeException("Invalid descriptor");
+            }
+
+            if (sb.length() > 1 && sb.charAt(0) == '(')
+                sb.append(", ");
+            sb.append(type);
+            for ( ; dims > 0; dims-- )
+                sb.append("[]");
+
+            count++;
+        }
+
+        return sb.toString();
+    }
     
+    public static void printMethodDescriptor(Descriptor descriptor, ConstantPool constant_pool) throws InvalidDescriptor, ConstantPoolException {
+        System.out.print("{\"returnType\":\"");
+        System.out.print( descriptor.getReturnType(constant_pool) );
+        System.out.print("\", \"parameterTypes\":[");
+        
+        String rawTypes = descriptor.getParameterTypes(constant_pool);
+        String ptypes = rawTypes.substring(1, rawTypes.length()-1);
+        String splitted[] = ptypes.split(",");
+        if (splitted != null && splitted.length > 0) {
+            for (int i = 0; i < splitted.length; i++) {
+                if (splitted[i].trim().equals("")) continue;
+                System.out.print("\"" + splitted[i].trim() + "\"");
+                if (i < splitted.length-1) System.out.print(",");
+            }
+        }
+        
+        System.out.print("]}");
+    }
 }

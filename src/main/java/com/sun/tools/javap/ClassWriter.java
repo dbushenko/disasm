@@ -41,7 +41,6 @@ import com.sun.tools.classfile.Attributes;
 import com.sun.tools.classfile.ClassFile;
 import com.sun.tools.classfile.Code_attribute;
 import com.sun.tools.classfile.ConstantPool;
-import com.sun.tools.classfile.ConstantPool.InvalidIndex;
 import com.sun.tools.classfile.ConstantPoolException;
 import com.sun.tools.classfile.ConstantValue_attribute;
 import com.sun.tools.classfile.Descriptor;
@@ -458,7 +457,7 @@ public class ClassWriter extends BasicWriter {
 
             @Override
             public Void visitLocal(Instruction instr, int index, Integer p) {
-                System.out.print("{}");
+                System.out.print("{\"tag\":\"visitLocal\"}");
 //                try {
 //                    System.out.print(new Gson().toJson(constant_pool.get(index)));
 //                } catch (InvalidIndex e) {
@@ -469,7 +468,7 @@ public class ClassWriter extends BasicWriter {
 
             @Override
             public Void visitLocalAndValue(Instruction instr, int index, int value, Integer p) {
-                System.out.print("{}");
+                System.out.print("{\"tag\":\"visitLocalAndValue\"}");
 //                try {
 //                    System.out.print(new Gson().toJson(constant_pool.get(index)));
 //                } catch (InvalidIndex e) {
@@ -480,31 +479,31 @@ public class ClassWriter extends BasicWriter {
 
             @Override
             public Void visitLookupSwitch(Instruction instr, int default_, int npairs, int[] matches, int[] offsets, Integer p) {
-                System.out.print("{}");
+                System.out.print("{\"tag\":\"visitLookupSwitch\"}");
                 return null;
             }
 
             @Override
             public Void visitTableSwitch(Instruction instr, int default_, int low, int high, int[] offsets, Integer p) {
-                System.out.print("{}");
+                System.out.print("{\"tag\":\"visitTableSwitch\"}");
                 return null;
             }
 
             @Override
             public Void visitValue(Instruction instr, int value, Integer p) {
-                System.out.print("{}");
+                System.out.print("{\"tag\":\"visitValue\",\"value\":" + value + "}");
                 return null;
             }
 
             @Override
             public Void visitUnknown(Instruction instr, Integer p) {
-                System.out.print("{}");
+                System.out.print("{\"tag\":\"visitUnknown\"}");
                 return null;
             }
 
             @Override
             public Void visitArrayType(Instruction instr, TypeKind kind, Integer p) {
-                System.out.print("{}");
+                System.out.print("{\"tag\":\"visitArrayType\"}");
                 return null;
             }
 
@@ -513,8 +512,11 @@ public class ClassWriter extends BasicWriter {
 
     protected void writeJsonMethod(Method m) {
         try {
-            System.out.println("{\"name\":\"" + m.getName(constant_pool) + "\",\n\"descriptor\":");
-            ConstantPoolPrinter.printConstant(constant_pool.get(m.descriptor.index), constant_pool);
+            System.out.print("{\"name\":\"" + m.getName(constant_pool) + "\"");
+            
+            System.out.print(",\n\"descriptor\":");            
+            ConstantPoolPrinter.printMethodDescriptor(m.descriptor, constant_pool);
+            
             System.out.print(",\n\"accessFlags\":");
             System.out.print(new Gson().toJson(m.access_flags.getMethodModifiers()));
         } catch (Exception e) {
