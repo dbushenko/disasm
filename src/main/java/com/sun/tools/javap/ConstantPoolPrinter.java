@@ -52,25 +52,25 @@ public class ConstantPoolPrinter {
         } else if (cpInfo instanceof CONSTANT_Integer_info) {
             CONSTANT_Integer_info info = (CONSTANT_Integer_info) cpInfo;
             System.out.print("{\"intValue\":");
-            System.out.print(info.value);
+            System.out.print("\""+String.valueOf(info.value)+"\"");
             System.out.print("}");
 
         } else if (cpInfo instanceof CONSTANT_Float_info) {
             CONSTANT_Float_info info = (CONSTANT_Float_info) cpInfo;
             System.out.print("{\"floatValue\":");
-            System.out.print(info.value);
+            System.out.print("\""+String.valueOf(info.value)+"\"");
             System.out.print("}");
 
         } else if (cpInfo instanceof CONSTANT_Long_info) {
             CONSTANT_Long_info info = (CONSTANT_Long_info) cpInfo;
             System.out.print("{\"longValue\":");
-            System.out.print(info.value);
+            System.out.print("\""+String.valueOf(info.value)+"\"");
             System.out.print("}");
 
         } else if (cpInfo instanceof CONSTANT_Double_info) {
             CONSTANT_Double_info info = (CONSTANT_Double_info) cpInfo;
             System.out.print("{\"doubleValue\":");
-            System.out.print(info.value);
+            System.out.print("\""+String.valueOf(info.value)+"\"");
             System.out.print("}");
 
         } else if (cpInfo instanceof CONSTANT_Class_info) {
